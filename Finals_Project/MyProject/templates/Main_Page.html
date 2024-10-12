@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geocoding Result with Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+    </style>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
+</head>
+<body>
+    <h1>Geocoding Result with Search</h1>
+    {% if from_location and to_location %}
+        <div>From: {{ from_location['formatted_address'] }}</div>
+        <div>To: {{ to_location['formatted_address'] }}</div>
+        <div>Latitude: {{ from_location['latitude'] }}</div>
+        <div>Longitude: {{ from_location['longitude'] }}</div>
+
+        <div id="map"></div>
+
+        <script>
+            var fromLat = parseFloat("{{ from_location['latitude'] }}");
+            var fromLng = parseFloat("{{ from_location['longitude'] }}");
+            var toLat = parseFloat("{{ to_location['latitude'] }}");
+            var toLng = parseFloat("{{ to_location['longitude'] }}");
+
+           
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: (fromLat + toLat) / 2, lng: (fromLng + toLng) / 2 },
+                zoom: 6
+            });
+
+           
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+                polylineOptions: {
+                    strokeColor: '#0b2ef4', 
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                }
+            });
+            directionsRenderer.setMap(map);
+
+           
+            var request = {
+                origin: { lat: fromLat, lng: fromLng },
+                destination: { lat: toLat, lng: toLng },
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+
+           
+            directionsService.route(request, function(result, status) {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                } else {
+                    console.error('Directions request failed due to ' + status);
+                }
+            });
+        </script>
+    {% else %}
+        <p>Address not found or API error!</p>
+    {% endif %}
+    <a href="/">Go back</a>
+</body>
+</html>

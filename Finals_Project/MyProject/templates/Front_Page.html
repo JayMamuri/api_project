@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geocoding App with Autocomplete</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
+    <script>
+        function initializeAutocomplete() {
+            
+            var fromInput = document.getElementById('from_address');
+            var toInput = document.getElementById('to_address');
+
+            
+            var fromAutocomplete = new google.maps.places.Autocomplete(fromInput);
+            var toAutocomplete = new google.maps.places.Autocomplete(toInput);
+        }
+
+        
+        window.onload = initializeAutocomplete;
+    </script>
+</head>
+<body>
+    <h1>Geocoding App with Autocomplete</h1>
+    <form action="/geocode" method="POST">
+        <label for="from_address">From address:</label>
+        <input type="text" id="from_address" name="from_address" required>
+        
+        <label for="to_address">To address:</label>
+        <input type="text" id="to_address" name="to_address" required>
+        
+        <button type="submit">Get Coordinates & Calculate Distance</button>
+    </form>
+</body>
+</html>
