@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geocoding App with Autocwsplete by Google</title>
     <title>Geocoding App with Autocomplete by Google</title>
     <script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places"></script>
     <script>
@@ -19,15 +20,21 @@
     </script>
 </head>
 <body>
-    <h1>Geocoding App with Autocomplete</h1>
-    <form action="/geocode" method="POST">
-        <label for="from_address">From address:</label>
-        <input type="text" id="from_address" name="from_address" required>
-        
-        <label for="to_address">To address:</label>
-        <input type="text" id="to_address" name="to_address" required>
-        
-        <button type="submit">Get Coordinates & Calculate Distance</button>
-    </form>
+    <div class="title">
+    <h1>GEOCODING + WEATHER CHECK</h1>
+    </div>
+    <div class="wrap">
+        <form action="/geocode" method="POST">
+            <div class="input-box">
+            <label for="from_address">FROM ADDRESS:</label>
+            <input type="text" id="from_address" name="from_address" required>
+            </div>
+            <div class="input-box">
+            <label for="to_address">TO ADDRESS:</label>
+            <input type="text" id="to_address" name="to_address" required>
+            </div>
+            <button type="submit">Get Coordinates & Calculate Distance</button>
+        </form>
+    </div>
 </body>
 </html>
