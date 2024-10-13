@@ -82,7 +82,12 @@ def geocode():
     if to_location:
         to_weather = get_weather(to_location['latitude'], to_location['longitude'])
 
-    return render_template('Main_Page.html', from_location=from_location, to_location=to_location, from_weather=from_weather, to_weather=to_weather, api_key=google_maps_api_key)
+    return render_template('Main_Page.html', 
+                            from_location=from_location, 
+                            to_location=to_location, 
+                            from_weather=from_weather, 
+                            to_weather=to_weather, 
+                            api_key=google_maps_api_key)
 
 if __name__ == '__main__':
     app.run(debug=True)
