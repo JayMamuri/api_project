@@ -26,7 +26,7 @@
             backdrop-filter: blur(11.5px);
             -webkit-backdrop-filter: blur(11.5px);
             margin-top: 80px;
-            width: 300px;
+            width: 357px;
             height: 500px;
             z-index: 1;
         }
@@ -45,20 +45,36 @@
         }
 
         #directionsPanel {
-            margin-top: 20px;
+            position: absolute;
+            right: 0;
+            top: 20px;
+            margin-right: 55px;
             padding: 10px;
-            background: #fff;
-            border: 1px solid #333;
-            border-radius: 8px;
-            width: 30%; 
-            max-height: 300px; 
-            scrollbar-width: none;
-            overflow-y: scroll;
-            background: rgba(255, 255, 255, 0.44);
+            background: rgba(255, 255, 255, 0.589);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(11.5px);
             -webkit-backdrop-filter: blur(11.5px);
+            width: 300px;
+            max-height: 80vh;
+            overflow-y: auto;
+
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: #0056b3;
         }
     </style>
   
@@ -66,34 +82,34 @@
 </head>
 <body>
     <div class="infos">
-    <h1>Geocoding Result</h1>
+    <h1>GEOCODING RESULT</h1>
     {% if from_location and to_location %}
-        <div>From: {{ from_location['formatted_address'] }}</div>
-        <div>To: {{ to_location['formatted_address'] }}</div>
-        <div>Latitude: {{ from_location['latitude'] }}</div>
-        <div>Longitude: {{ from_location['longitude'] }}</div>
+        <div><strong>FROM: </strong>{{ from_location['formatted_address'] }}</div>
+        <div><strong>TO: </strong> {{ to_location['formatted_address'] }}</div>
+        <div><strong>LATITUDE: </strong> {{ from_location['latitude'] }}</div>
+        <div><strong>LONGITUDE: </strong> {{ from_location['longitude'] }}</div>
 
-        <h3>From Location Weather:</h3>
+        <h3>FROM LOCATION WEATHER:</h3>
         {% if from_weather %}
-            <div>Temperature: {{ from_weather['temperature'] }} °C</div>
-            <div>Weather: {{ from_weather['description'] }}</div>
-            <div>Humidity: {{ from_weather['humidity'] }}%</div>
-            <div>Wind Speed: {{ from_weather['wind_speed'] }} m/s</div>
+            <div><strong>TEMPERATURE: </strong>{{ from_weather['temperature'] }} °C</div>
+            <div><strong>WEATHER: </strong>{{ from_weather['description'] }}</div>
+            <div><strong>HUMIDITY: </strong>{{ from_weather['humidity'] }}%</div>
+            <div><strong>WIND SPEED: </strong>{{ from_weather['wind_speed'] }} m/s</div>
         {% else %}
             <p>No weather data available for the from location.</p>
         {% endif %}
 
-        <h3>To Location Weather:</h3>
+        <h3>TO LOCATION WEATHER:</h3>
         {% if to_weather %}
-            <div>Temperature: {{ to_weather['temperature'] }} °C</div>
-            <div>Weather: {{ to_weather['description'] }}</div>
-            <div>Humidity: {{ to_weather['humidity'] }}%</div>
-            <div>Wind Speed: {{ to_weather['wind_speed'] }} m/s</div>
+            <div><strong>TEMPERATURE: </strong>{{ to_weather['temperature'] }} °C</div>
+            <div><strong>WEATHER: </strong>{{ to_weather['description'] }}</div>
+            <div><strong>HUMIDITY: </strong>{{ to_weather['humidity'] }}%</div>
+            <div><strong>WIND SPEED: </strong>{{ to_weather['wind_speed'] }} m/s</div>
         {% else %}
             <p>No weather data available for the to location.</p>
         {% endif %}
         <br>
-        <a href="/">Go back</a>
+        <a href="/" class="back-link">Go back to Search </a>
     </div>
         <div id="map"></div>
         <div id="directionsPanel"></div>
