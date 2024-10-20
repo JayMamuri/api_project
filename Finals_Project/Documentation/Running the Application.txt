@@ -1,0 +1,13 @@
+**Running the Application**
+
+-- Start the Flask server:
+
+- Run the Flask application by navigating to the project directory and running:
+python [app.py]
+
+-- Access the Web App:
+- Open a web browser and go to http://127.0.0.1:5000/ to access the application.
+
+**Future Deployment**
+- For future deployment, you can use any hosting service that supports Python applications (e.g., Heroku, PythonAnywhere, or VPS setups).
+- Make sure to securely manage environment variables for your API keys.
