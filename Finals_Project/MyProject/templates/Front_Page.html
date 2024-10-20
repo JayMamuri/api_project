@@ -1,40 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> <!-- Set character encoding to UTF-8  this is default -->
+    
+    <!-- Ensure responsiveness on mobile devices this is default-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Link to external CSS file located in the 'static/css' folder -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styleFrontPage.css') }}">
+
+    <!-- Our Page Title-->
     <title>Geocoding App with Autocomplete by Google</title>
+
+    <!-- Load Google Maps JavaScript API with Places Library for Autocomplete feature -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places"></script>
+
+    
     <script>
+        // Function to initialize Google Places Autocomplete
         function initializeAutocomplete() {
-          
+
+            // Get the 'from' and 'to' input fields
             var fromInput = document.getElementById('from_address');
             var toInput = document.getElementById('to_address');
 
+            // Apply Google Maps Places Autocomplete feature to both input field
             var fromAutocomplete = new google.maps.places.Autocomplete(fromInput);
             var toAutocomplete = new google.maps.places.Autocomplete(toInput);
         }
-       
-        window.onload = initializeAutocomplete;
+        // initialize Autocomplete function runs once the page fully load
+        window.onload = initializeAutocomplete; 
     </script>
+
 </head>
 <body>
     <div class="title">
-    <h1>GEOCODING + WEATHER CHECK</h1>
+        <!-- Main title of the Webpage application -->
+        <h1>GEOCODING + WEATHER CHECK</h1>
     </div>
+
     <div class="wrap">
+         <!-- gettting the 'from' and 'to' addresses, sends data via POST "/geocode" in python app route -->
         <form action="/geocode" method="POST">
+
+            <!-- "From" address input box-->
             <div class="input-box">
-            <label for="from_address"><strong>FROM ADDRESS: </strong></label>
-            <input type="text" id="from_address" name="from_address" required>
+                <label for="from_address"><strong>FROM ADDRESS: </strong></label>
+                <input type="text" id="from_address" name="from_address" required>
             </div>
+
+            <!-- "to" address input box-->
             <div class="input-box">
-            <label for="to_address"><strong>TO ADDRESS: </strong></label>
-            <input type="text" id="to_address" name="to_address" required>
+                <label for="to_address"><strong>TO ADDRESS: </strong></label>
+                <input type="text" id="to_address" name="to_address" required>
             </div>
-            <button type="submit">Get Coordinates & Calculate Distance</button>
+
+            <!-- Button to execute geocoding and distance calculation -->
+            <button type="submit">GET COORDINATES & CALCULATE DISTANCE</button>
         </form>
     </div>
+
 </body>
 </html>

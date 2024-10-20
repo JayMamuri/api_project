@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geocoding Result</title>
+
     <style>
+        /* General styles for body, margins, and flexbox layout */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -13,29 +15,38 @@
             flex-direction: column;
         }
 
+        /* Styling for (h1) */
         h1 {
             color: #333;
         }
 
+        /* Styling for the info container showing the geocoding and weather results */
         .infos {
-            padding: 0%;
             padding-left: 20px;
-            background: rgba(255, 255, 255, 0.44);
+            left: 0%;
+            margin-left: 10px;
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(11.5px);
-            -webkit-backdrop-filter: blur(11.5px);
+            backdrop-filter: blur(5.5px);
+            -webkit-backdrop-filter: blur(5.5px);
             margin-top: 80px;
             width: 357px;
             height: 500px;
             z-index: 1;
         }
+
+        /* Aligning direction panel */
         .directionsPanel{
             align-items: center;
         }
+
+        /* Flex container for geocoding result and directions panel */
         #infos #directionsPanel{
             display: flex;
         }
+
+        /* Full-screen map styling */
         #map {
             position: absolute;
             height: 100vh;
@@ -44,23 +55,25 @@
             
         }
 
+          /* Styling for the directions panel */
         #directionsPanel {
             position: absolute;
             right: 0;
             top: 20px;
             margin-right: 55px;
             padding: 10px;
-            background: rgba(255, 255, 255, 0.589);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(11.5px);
-            -webkit-backdrop-filter: blur(11.5px);
+            backdrop-filter: blur(5.5px);
+            -webkit-backdrop-filter: blur(5.5px);
             width: 300px;
             max-height: 80vh;
             overflow-y: auto;
 
         }
 
+        /* Styling for the back link button */
         .back-link {
             display: inline-block;
             margin-top: 5px;
@@ -73,22 +86,26 @@
             transition: background-color 0.3s ease;
         }
 
+        /* Change button color on hover */
         .back-link:hover {
             background-color: #0056b3;
         }
     </style>
-  
+     <!-- Load/Get the Google Maps JavaScript API -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places"></script>
 </head>
 <body>
+
+    <!-- Display geocoding results -->
     <div class="infos">
-    <h1>GEOCODING RESULT</h1>
+        <h1>GEOCODING RESULT</h1>
     {% if from_location and to_location %}
         <div><strong>FROM: </strong>{{ from_location['formatted_address'] }}</div>
         <div><strong>TO: </strong> {{ to_location['formatted_address'] }}</div>
         <div><strong>LATITUDE: </strong> {{ from_location['latitude'] }}</div>
         <div><strong>LONGITUDE: </strong> {{ from_location['longitude'] }}</div>
 
+         <!-- Display weather info for FROM location -->
         <h3>FROM LOCATION WEATHER:</h3>
         {% if from_weather %}
             <div><strong>TEMPERATURE: </strong>{{ from_weather['temperature'] }} °C</div>
@@ -99,6 +116,7 @@
             <p>No weather data available for the from location.</p>
         {% endif %}
 
+         <!-- Display weather info for TO location -->
         <h3>TO LOCATION WEATHER:</h3>
         {% if to_weather %}
             <div><strong>TEMPERATURE: </strong>{{ to_weather['temperature'] }} °C</div>
@@ -108,54 +126,63 @@
         {% else %}
             <p>No weather data available for the to location.</p>
         {% endif %}
+        
         <br>
+         <!-- Back button link to go back to search page -->
         <a href="/" class="back-link">Go back to Search </a>
+
     </div>
-        <div id="map"></div>
-        <div id="directionsPanel"></div>
+
+        <div id="map"></div>                 <!-- Map container -->
+        <div id="directionsPanel"></div>     <!-- Directions panel for displaying the directions -->
 
         <script>
+            // Parse latitude and longitude for the FROM and TO locations
             var fromLat = parseFloat("{{ from_location['latitude'] }}");
             var fromLng = parseFloat("{{ from_location['longitude'] }}");
             var toLat = parseFloat("{{ to_location['latitude'] }}");
             var toLng = parseFloat("{{ to_location['longitude'] }}");
 
-    
+            // Initialize the map, centering it between the two points
             var map = new google.maps.Map(document.getElementById('map'), {
                 center: { lat: (fromLat + toLat) / 2, lng: (fromLng + toLng) / 2 },
                 zoom: 6
             });
 
- 
+            // Initialize the Directions Service and Renderer
             var directionsService = new google.maps.DirectionsService();
             var directionsRenderer = new google.maps.DirectionsRenderer({
+                // style for polyline
                 polylineOptions: {
-                    strokeColor: '#0b2ef4',
+                    strokeColor: '#0b2ef4', 
                     strokeOpacity: 1.0,
                     strokeWeight: 4
                 },
-                panel: document.getElementById('directionsPanel') 
+                panel: document.getElementById('directionsPanel')  // Set the panel for route directions
             });
-            directionsRenderer.setMap(map);
 
+            directionsRenderer.setMap(map); // attach the directionsRenderer to the map
 
+            // Create a directions request for driving mode
             var request = {
                 origin: { lat: fromLat, lng: fromLng },
                 destination: { lat: toLat, lng: toLng },
-                travelMode: google.maps.TravelMode.DRIVING
+                travelMode: google.maps.TravelMode.DRIVING  
             };
 
+            // Send the directions request and handle the response
             directionsService.route(request, function(result, status) {
                 if (status === google.maps.DirectionsStatus.OK) {
                     directionsRenderer.setDirections(result);
 
-                    var leg = result.routes[0].legs[0];
-                    var distance = leg.distance.text;
-                    var duration = leg.duration.text;
+                    var leg = result.routes[0].legs[0]; // Get the route leg (from-to)
+                    var distance = leg.distance.text;   // Get the distance
+                    var duration = leg.duration.text;   // Get the duration
 
+                    // Create an info window with distance and duration
                     var infoWindow = new google.maps.InfoWindow();
-                    var firstStep = leg.steps[0];
-                    var midPoint = firstStep.start_location;
+                    var firstStep = leg.steps[0];               // Get the first step of the rout
+                    var midPoint = firstStep.start_location;    // Get the midpoint for infoWindow
 
                     infoWindow.setContent('Distance: ' + distance + '<br>Duration: ' + duration);
                     infoWindow.setPosition(midPoint);
@@ -165,10 +192,10 @@
                         map: map
                     });
 
-                    infoWindow.open(map, marker);
+                    infoWindow.open(map, marker);   // Display the infoWindow on the marker
                     infoWindow.setOptions({ pixelOffset: new google.maps.Size(5, -5) });
                 } else {
-                    console.error('Directions request failed due to ' + status);
+                    console.error('Directions request failed due to ' + status); // Error handling
                 }
             });
         </script>
