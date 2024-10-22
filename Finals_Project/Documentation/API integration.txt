@@ -1,0 +1,155 @@
+**APIs Integrated**
+-- Google Maps Geocoding API
+Purpose: Converts addresses provided by the user (FROM and TO) into geographical coordinates (latitude and longitude).
+
+Integration:
+
+The user inputs addresses on the form.
+
+Flask processes the input and makes a request to the Google Geocoding API to get the location's coordinates and formatted address.
+The API responds with geographical data (latitude, longitude, and formatted address).
+
+**Endpoint: https://maps.googleapis.com/maps/api/geocode/json
+
+example code:
+
+def get_google_geocode(address):
+    api_key = os.getenv('GOOGLE_MAPS_API_KEY')  
+
+    # Return None if API key is missing
+    if not api_key:
+        print("Google maps API key not found.")
+        return None
+    
+    url = 'https://maps.googleapis.com/maps/api/geocode/json' 
+
+    # Parameters to send to Google Geocoding API
+    getparams = {
+        'address': address,
+        'key': api_key
+    }
+
+    response = requests.get(url, params=getparams) #Send request to Google Geocoding API
+    
+    if response.status_code == 200:
+        data = response.json()          # Parse the JSON response
+        if data['results']:             # Check if results exist
+            result = data['results'][0] # Get the first result
+            return {
+                'formatted_address': result['formatted_address'],   
+                'latitude': result['geometry']['location']['lat'],  
+                'longitude': result['geometry']['location']['lng']  
+            }
+    return None 
+
+-- Google Maps Directions API
+Purpose: Provides step-by-step driving directions between the FROM and TO locations, calculating distance and duration.
+
+Integration:
+
+After obtaining the geocoded locations, the application uses the Google Directions API to calculate the route between the two points.
+The map is displayed on the frontend using Google Maps JavaScript API, with directions rendered as a polyline on the map.
+
+**Endpoint: https://maps.googleapis.com/maps/api/directions/json
+
+
+example code:
+
+    <script>
+            // Initialize the Directions Service and Renderer
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+                // style for polyline
+                polylineOptions: {
+                    strokeColor: '#0b2ef4', 
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                },
+                panel: document.getElementById('directionsPanel')  // Set the panel for route directions
+            });
+
+            directionsRenderer.setMap(map); // attach the directionsRenderer to the map
+
+            // Create a directions request for driving mode
+            var request = {
+                origin: { lat: fromLat, lng: fromLng },
+                destination: { lat: toLat, lng: toLng },
+                travelMode: google.maps.TravelMode.DRIVING  
+            };
+
+            // Send the directions request and handle the response
+            directionsService.route(request, function(result, status) {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+
+                    var leg = result.routes[0].legs[0]; // Get the route leg (from-to)
+                    var distance = leg.distance.text;   // Get the distance
+                    var duration = leg.duration.text;   // Get the duration
+
+                    // Create an info window with distance and duration
+                    var infoWindow = new google.maps.InfoWindow();
+                    var firstStep = leg.steps[0];               // Get the first step of the rout
+                    var midPoint = firstStep.start_location;    // Get the midpoint for infoWindow
+
+                    infoWindow.setContent('Distance: ' + distance + '<br>Duration: ' + duration);
+                    infoWindow.setPosition(midPoint);
+
+                    var marker = new google.maps.Marker({
+                        position: midPoint,
+                        map: map
+                    });
+
+                    infoWindow.open(map, marker);   // Display the infoWindow on the marker
+                    infoWindow.setOptions({ pixelOffset: new google.maps.Size(5, -5) });
+                } else {
+                    console.error('Directions request failed due to ' + status); // Error handling
+                }
+            });
+    </script>
+
+
+-- OpenWeatherMap API
+Purpose: Fetches real-time weather data (temperature, description, humidity, wind speed) for the FROM and TO locations based on their coordinates.
+
+Integration:
+
+The geocoded latitude and longitude of both locations are passed to the OpenWeatherMap API.
+The API responds with the current weather conditions, which are displayed on the result page.
+
+**Endpoint: https://api.openweathermap.org/data/2.5/weather
+
+example code:
+
+def get_weather(lat, lon):
+    api_key = os.getenv('OPENWEATHERMAP_API_KEY') 
+    
+    # Return None if API key is missing
+    if not api_key:
+        print("Open Weather API key not found.")
+        return None
+
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+
+    # Parameters to send to OpenWeather Api
+    getparams = {
+        'lat': lat,
+        'lon': lon,
+        'appid': api_key,
+        'units': 'metric'  
+    }
+
+    response = requests.get(url, params=getparams) #Send request to Google Geocoding API
+    
+    if response.status_code == 200:
+        data = response.json()
+        if 'main' in data and 'weather' in data:
+            weather_info = {
+                'temperature': data['main'].get('temp', 'N/A'),                 
+                'description': data['weather'][0].get('description', 'N/A'),    
+                'humidity': data['main'].get('humidity', 'N/A'),                
+                'wind_speed': data['wind'].get('speed', 'N/A')                  
+            }
+            return weather_info # Return the weather information
+    else:
+        print(f"Error: {response.status_code} - {response.text}")  
+    return None 
