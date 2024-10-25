@@ -15,6 +15,7 @@
 vscode terminal:
 [pip install requests]
 [python pip install flask]
+[pip install python-dotenv]
 
 -- Get API Keys:
 
