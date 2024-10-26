@@ -17,9 +17,11 @@
         <h1>GEOCODING RESULT</h1>
     {% if from_location and to_location %}
         <div><strong>FROM: </strong>{{ from_location['formatted_address'] }}</div>
-        <div><strong>TO: </strong> {{ to_location['formatted_address'] }}</div>
         <div><strong>LATITUDE: </strong> {{ from_location['latitude'] }}</div>
         <div><strong>LONGITUDE: </strong> {{ from_location['longitude'] }}</div>
+        <div><strong>TO: </strong> {{ to_location['formatted_address'] }}</div>
+        <div><strong>LATITUDE: </strong> {{ to_location['latitude'] }}</div>
+        <div><strong>LONGITUDE: </strong> {{ to_location['longitude'] }}</div>
 
          <!-- Display weather info for FROM location -->
         <h3>FROM LOCATION WEATHER:</h3>
