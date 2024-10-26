@@ -1,5 +1,6 @@
 **Features**
 
+- Autocomplete places/addresses: It’s a valuable addition that enhances user experience by simplifying address entry and reducing errors. 
 - Geocoding: Users can enter two addresses (FROM and TO). The app retrieves their corresponding latitude and longitude.
 - Weather Information: Fetches and displays the temperature, weather description, humidity, and wind speed for both locations using the OpenWeatherMap API.
 - Driving Directions: Displays driving directions between the two locations with a map and step-by-step instructions using the Google Directions API.
