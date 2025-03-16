@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" 
+    href="data:image/svg+xml,<?xml version='1.0' ?><svg enable-background='new 0 0 32 32' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'><path d='M8,1C4.14,1,1,4.09,1,7.89c0,3.58,5.66,9.2,6.3,9.83C7.5,17.91,7.75,18,8,18s0.5-0.09,0.7-0.28c0.64-0.63,6.3-6.25,6.3-9.83C15,4.09,11.86,1,8,1z' fill='%233F51B5'/><path d='M10,7.89c0,1.11-0.9,2-2,2S6,9,6,7.89c0-1.1,0.9-2,2-2S10,6.79,10,7.89z' fill='%232197F3'/><path d='M30,19h-5V2c0-0.55-0.45-1-1-1h-6c-0.55,0-1,0.45-1,1v17H2c-0.55,0-1,0.45-1,1v6c0,0.55,0.45,1,1,1h15v3c0,0.55,0.45,1,1,1h6c0.55,0,1-0.45,1-1v-3h5c0.55,0,1-0.45,1-1v-6C31,19.45,30.55,19,30,19z' fill='%232197F3'/></svg>">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styleMainPage.css') }}">
+    <title>Geocoding Result</title>
+
+     <!-- Load/Get the Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places"></script>
+</head>
+<body>
+
+    <!-- Display geocoding results -->
+    <div class="infos">
+        <h1>GEOCODING RESULT</h1>
+    {% if from_location and to_location %}
+        <div><strong>FROM: </strong>{{ from_location['formatted_address'] }}</div>
+        <div><strong>LATITUDE: </strong> {{ from_location['latitude'] }}</div>
+        <div><strong>LONGITUDE: </strong> {{ from_location['longitude'] }}</div>
+        <div><strong>TO: </strong> {{ to_location['formatted_address'] }}</div>
+        <div><strong>LATITUDE: </strong> {{ to_location['latitude'] }}</div>
+        <div><strong>LONGITUDE: </strong> {{ to_location['longitude'] }}</div>
+
+         <!-- Display weather info for FROM location -->
+        <h3>FROM LOCATION WEATHER:</h3>
+        {% if from_weather %}
+            <div><strong>TEMPERATURE: </strong>{{ from_weather['temperature'] }} °C</div>
+            <div><strong>WEATHER: </strong>{{ from_weather['description'] }}</div>
+            <div><strong>HUMIDITY: </strong>{{ from_weather['humidity'] }}%</div>
+            <div><strong>WIND SPEED: </strong>{{ from_weather['wind_speed'] }} m/s</div>
+        {% else %}
+            <p>No weather data available for the from location.</p>
+        {% endif %}
+
+         <!-- Display weather info for TO location -->
+        <h3>TO LOCATION WEATHER:</h3>
+        {% if to_weather %}
+            <div><strong>TEMPERATURE: </strong>{{ to_weather['temperature'] }} °C</div>
+            <div><strong>WEATHER: </strong>{{ to_weather['description'] }}</div>
+            <div><strong>HUMIDITY: </strong>{{ to_weather['humidity'] }}%</div>
+            <div><strong>WIND SPEED: </strong>{{ to_weather['wind_speed'] }} m/s</div>
+        {% else %}
+            <p>No weather data available for the to location.</p>
+        {% endif %}
+        
+        <br>
+         <!-- Back button link to go back to search page -->
+        <a href="/" class="back-link">Go back to Search </a>
+
+    </div>
+
+        <div id="map"></div>                 <!-- Map container -->
+        <div id="directionsPanel"></div>     <!-- Directions panel for displaying the directions -->
+
+        <script>
+            // Parse latitude and longitude for the FROM and TO locations
+            var fromLat = parseFloat("{{ from_location['latitude'] }}");
+            var fromLng = parseFloat("{{ from_location['longitude'] }}");
+            var toLat = parseFloat("{{ to_location['latitude'] }}");
+            var toLng = parseFloat("{{ to_location['longitude'] }}");
+
+            // Initialize the map, centering it between the two points
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: (fromLat + toLat) / 2, lng: (fromLng + toLng) / 2 },
+                zoom: 6
+            });
+
+            // Initialize the Directions Service and Renderer
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer({
+                // style for polyline
+                polylineOptions: {
+                    strokeColor: '#0b2ef4', 
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4
+                },
+                panel: document.getElementById('directionsPanel')  // Set the panel for route directions
+            });
+
+            directionsRenderer.setMap(map); // attach the directionsRenderer to the map
+
+            // Create a directions request for driving mode
+            var request = {
+                origin: { lat: fromLat, lng: fromLng },
+                destination: { lat: toLat, lng: toLng },
+                travelMode: google.maps.TravelMode.DRIVING  
+            };
+
+            // Send the directions request and handle the response
+            directionsService.route(request, function(result, status) {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+
+                    var leg = result.routes[0].legs[0]; // Get the route leg (from-to)
+                    var distance = leg.distance.text;   // Get the distance
+                    var duration = leg.duration.text;   // Get the duration
+
+                    // Create an info window with distance and duration
+                    var infoWindow = new google.maps.InfoWindow();
+                    var firstStep = leg.steps[0];               // Get the first step of the rout
+                    var midPoint = firstStep.start_location;    // Get the midpoint for infoWindow
+
+                    infoWindow.setContent('Distance: ' + distance + '<br>Duration: ' + duration);
+                    infoWindow.setPosition(midPoint);
+
+                    var marker = new google.maps.Marker({
+                        position: midPoint,
+                        map: map
+                    });
+
+                    infoWindow.open(map, marker);   // Display the infoWindow on the marker
+                    infoWindow.setOptions({ pixelOffset: new google.maps.Size(5, -5) });
+                } else {
+                    console.error('Directions request failed due to ' + status); // Error handling
+                }
+            });
+        </script>
+    {% else %}
+        <p>Address not found or API error!</p>
+    {% endif %}
+</body>
+</html>

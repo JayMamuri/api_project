@@ -1,0 +1,8 @@
+**Our web application integrates Google Maps Geocoding API, Google Maps Directions API, and OpenWeatherMap API to provide users with the ability to:**
+
+Geocode two locations (FROM and TO) by converting addresses into geographical coordinates.
+Display real-time weather data for both locations.
+Show driving directions and a map route between the two locations, with distance and travel time.
+
+
+

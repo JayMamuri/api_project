@@ -1,0 +1,56 @@
+**Setup and Configuration Instructions**
+
+* Prerequisites
+
+- Python 3.x installed
+- Flask web framework installed
+- Google API Key for accessing Google Maps Geocoding, Directions, and JavaScript Maps API
+- OpenWeatherMap API Key
+
+* Environment Setup
+
+*Install Required Python Packages:
+*Install the necessary Python packages using pip:
+
+vscode terminal:
+[pip install requests]
+[python pip install flask]
+[pip install python-dotenv]
+
+-- Get API Keys:
+
+Google Maps API Key:
+- Visit Google Cloud Platform.
+- Create a new project and enable Geocoding API, Directions API, and Maps JavaScript API.
+- Obtain an API key from the credentials page.
+
+OpenWeatherMap API Key:
+- Create an account on OpenWeatherMap.
+- Obtain an API key from the API keys section.
+
+
+-- Project Structure:
+
+The project structure should look like this:
+
+/myapp
+├── app.py (Flask application)
+├── .env (Environment variables)
+├── templates
+│   ├── index.html (Search page)
+│   └── result.html (Geocoding result and map)
+├── static
+│   └── css
+│       └── styles.css (Custom styles for the web pages)
+
+
+-- Environment variables:
+
+- Inside the.env file should be like this.:
+
+[GOOGLE_API_KEY = 'your-google-api-key']
+[OPENWEATHER_API_KEY = 'your-openweathermap-api-key']
+
+
+
+    

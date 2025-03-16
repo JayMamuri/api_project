@@ -1,0 +1,29 @@
+**User Interaction**
+
+--Search Page
+
+Input Fields:
+- The user enters the "FROM" and "TO" locations in two text fields.
+Submit Search:
+- After filling out both fields, the user clicks the "Submit" button.
+- This triggers the application to fetch geocoding, weather, and direction data.
+
+
+--Result Page
+Once the data is fetched:
+
+Geocoding Result:
+- The addresses (formatted by Google Geocoding API) are shown.
+- The latitude and longitude of both locations are displayed.
+
+Weather Information:
+- Displays the current weather conditions for both FROM and TO locations.
+
+Map and Directions:
+- A full-screen Google Map is displayed.
+- Directions between the two locations are drawn with a polyline.
+- Driving distance and estimated time are shown in a popup on the map.
+- Step-by-step driving instructions are listed in the directions panel on the right.
+
+**Return to Search**
+- There is a "Go back to Search" button to return to the homepage and start a new search.
